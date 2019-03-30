@@ -156,7 +156,7 @@ function movieThis() {
 if (!process.argv[2]){
   console.log(
 `
-This program has three functions:
+This program has four functions:
 
 It can retrieve upcoming shows for a specified artist with the concert-this command like this:
 node liri.js concert-this BANDNAME
