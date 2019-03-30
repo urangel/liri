@@ -12,6 +12,65 @@ var Spotify = require('node-spotify-api');
 
 var spotify = new Spotify(keys.spotify);
 
+function outputThing(Thing,data,i){
+  try{
+    switch(Thing){
+      case 'songTitle':
+        return JSON.stringify(data.tracks.items[i].name, null, 2);
+        break; 
+      case 'albumTitle':
+        return JSON.stringify(data.tracks.items[i].album.name, null, 2);
+        break;
+      case 'artistName':
+        return JSON.stringify(data.tracks.items[i].album.artists[0].name, null, 2);
+        break;
+      case 'spotifyLink':
+        return JSON.stringify(data.tracks.items[i].external_urls.spotify, null, 2);
+        break;
+      case 'venue':
+        return data.data[i].venue.name;
+        break;
+      case 'location':
+        return data.data[i].venue.city +", " + data.data[i].venue.region + ", " + data.data[i].venue.country;
+        break;
+      case 'date':
+        return data.data[i].datetime;
+        break;
+      case 'movieTitle':
+        return data.data.Title;
+        break;
+      case 'year':
+        return data.data.Year;
+        break;
+      case 'imdb':
+        return data.data.Ratings[0].Value;
+        break;
+      case 'rotten':
+        return data.data.Ratings[1].Value;
+        break;
+      case 'country':
+        return data.data.Country;
+        break;
+      case 'language':
+        return data.data.Language;
+        break;
+      case 'plot':
+        return data.data.Plot;
+        break;
+      case 'actors':
+        return data.data.Actors;
+        break;
+      default:
+        return "No Data Found"
+        break;
+    }
+  }
+  catch{
+    return "No Data Found"
+  }
+
+}
+
 function spotifyThis() {
   var query = "";
   if (process.argv[3]){
@@ -29,10 +88,10 @@ function spotifyThis() {
       for ( let i = 9 ; i > -1 ; i--){
         console.log("Entry #: " + (i+1) + "\r\n" + 
         "---------------------------------------" + "\r\n" +
-        "Song name: " + JSON.stringify(data.tracks.items[i].name, null, 2) + "\r\n"+ 
-        "Album name: " + JSON.stringify(data.tracks.items[i].album.name, null, 2) + "\r\n"+ 
-        "Artist name: " + JSON.stringify(data.tracks.items[i].album.artists[0].name, null, 2) + "\r\n"+ 
-        "Spotify link: " + JSON.stringify(data.tracks.items[i].external_urls.spotify, null, 2) + "\r\n" + 
+        "Song name: " + outputThing('songTitle',data,i) + "\r\n"+ 
+        "Album name: " + outputThing('albumTitle',data,i) + "\r\n"+ 
+        "Artist name: " + outputThing('artistName',data,i) + "\r\n"+ 
+        "Spotify link: " + outputThing('spotifyLink',data,i) + "\r\n" + 
         "---------------------------------------" + "\r\n"); 
     }
     });
@@ -52,14 +111,14 @@ function concertThis() {
   }
 
   axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
-  .then(function (response) {
+  .then(function (data) {
     for ( let i = 9 ; i > -1; i --){
       console.log(
         "Entry #: " + (i+1) + "\r\n" + 
         "*******************************************" + "\r\n" +
-        "Venue: " + response.data[i].venue.name + "\r\n"+ 
-        "Location: " + response.data[i].venue.city +", " + response.data[i].venue.region + ", " + response.data[i].venue.country + "\r\n" + 
-        "Date: " + moment(response.data[i].datetime).format("MM/DD/YYYY")+ "\r\n" + 
+        "Venue: " + outputThing('venue',data,i) + "\r\n"+ 
+        "Location: " + outputThing('location',data,i) + "\r\n" + 
+        "Date: " + moment(outputThing('date',data,i)).format("MM/DD/YYYY")+ "\r\n" + 
         "*******************************************" + '\r\n')
     }
   })
@@ -79,17 +138,17 @@ function movieThis() {
   }
 
   axios.get("http://www.omdbapi.com/?apikey=trilogy&t=" + movie)
-  .then(function (response) {
+  .then(function (data) {
     console.log(
     "############################################" + "\r\n" +
-    "Title: " + response.data.Title + "\r\n" +
-    "Year: " + response.data.Year + "\r\n" + 
-    "IMBD Rating: " + response.data.Ratings[0].Value + "\r\n" + 
-    "Rotten Tomatoes Rating: " + response.data.Ratings[1].Value + "\r\n" + 
-    "Country: " + response.data.Country + "\r\n" + 
-    "Language: " + response.data.Language + "\r\n" + 
-    "Plot: " + response.data.Plot + "\r\n" + 
-    "Actors: " + response.data.Actors + "\r\n" + 
+    "Title: " + outputThing('movieTitle',data,null) + "\r\n" +
+    "Year: " + outputThing('year',data,null) + "\r\n" + 
+    "IMBD Rating: " + outputThing('imdb',data,null)  + "\r\n" + 
+    "Rotten Tomatoes Rating: " + outputThing('rotten',data,null) + "\r\n" + 
+    "Country: " + outputThing('country',data,null) + "\r\n" + 
+    "Language: " + outputThing('language',data,null) + "\r\n" + 
+    "Plot: " + outputThing('plot',data,null) + "\r\n" + 
+    "Actors: " + outputThing('actors',data,null) + "\r\n" + 
     "############################################" + "\r\n")
   })
 }
